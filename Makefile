@@ -13,6 +13,9 @@ ASM_SRCS = $(wildcard boot/*.S)
 ASM_OBJS = $(patsubst boot/%.S, build/%.o, $(ASM_SRCS)) 
 #boot/ 안에 있는 .S 파일을 .o파일로 이름을 바꿔 넣는다. - 그냥 컴파일할때 쓸 이름을 담은 변수가 필요했던 것일 뿐임
 
+INC_DIRS = include
+#헤더 파일 위치지정
+
 navilos = build/navilos.axf #빌드되는 axf 파일의 위치
 navilos_bin = build/navilos.bin #빌드되는 bin 파일의 위치
 
@@ -41,6 +44,8 @@ $(navilos) : $(ASM_OBJS) $(LINKER_SCRIPT)
 
 build/%.o: boot/%.S
 	mkdir -p $(shell dirname $@)
-	$(AS) -march=$(ARCH) -mcpu=$(MCPU) -g -o $@ $<
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -c -g -o $@ $<
 #오브젝트 파일을 빌드할 스크립트
 # 따로 호출안함. 그냥 오브젝트 파일 만들고 싶을 때 치면 됨
+#원래는 as를 사용했으나, c헤더와 연동하여 사용하기에 CC를 사용하게끔 만듬.
+#CC와 INC_DIRS 추가됨
